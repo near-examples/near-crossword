@@ -51,7 +51,10 @@ const App = ({ nearConfig, data }) => {
     } finally {
       setShowLoader(false);
       console.log('Transaction status:', transaction.status);
-      console.log('Transaction hash:', transaction.transaction.hash);
+      if (transaction.hasOwnProperty('transaction') &&
+          transaction.transaction.hasOwnProperty('hash')) {
+        console.log('Transaction hash:', transaction.transaction.hash);
+      }
     }
   }
 

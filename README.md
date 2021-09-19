@@ -29,9 +29,9 @@ cd contract
 ./build.sh
 ```
 
-3. Run `near dev-deploy` to deploy the contract to `testnet`.
-4. Create a crossword, let's say that the answer to your crossword is "many clever words"
-5. Answer for your crossword from now on will be a seed phrase! Let's generate key pair out of it.
+4. Run `near dev-deploy` to deploy the contract to `testnet`.
+5. Create a crossword, let's say that the answer to your crossword is "many clever words"
+6. Answer for your crossword from now on will be a seed phrase! Let's generate key pair out of it.
 
    ```bash
    near generate-key randomAccountId.testnet --seedPhrase='many clever words'
@@ -39,7 +39,7 @@ cd contract
 
    Now this key pair will be store on your machine under `~/.near-credentials/testnet/randomAccountId.json`
 
-6. We should add your puzzle to our contract. To do that run
+7. We should add your puzzle to our contract. To do that run
    
    ```bash
    near call <contract-account-id> new_puzzle '{"answer_pk":"<generated-pk>"}' --accountId=<signer-acc-id> --deposit=10
@@ -52,7 +52,7 @@ cd contract
    
    After this call your puzzle will be added to the NEAR Crossword contract. Share your Crossword with friends, the person who will be able to solve it will be able to generate the same key pair and get the reward. Let's do that in the following steps.
 
-7. Pretend that we have solved the puzzle and generated the very same key pair. This time it should be stored at `~/.near-credentials/testnet/<contract-id>.json`. We are using `<contract-id>` here because in the next step we will need to sign the transaction with this acc.
+8. Pretend that we have solved the puzzle and generated the very same key pair. This time it should be stored at `~/.near-credentials/testnet/<contract-id>.json`. We are using `<contract-id>` here because in the next step we will need to sign the transaction with this acc.
 
 Attention! If you are using the same machine, your old key pair from `<dev-acc>` will be overwritten! Save it in some other place if you need it. Keys are stored in `~/.near-credentials/testnet/` folder.
 
