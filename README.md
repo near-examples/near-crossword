@@ -3,10 +3,35 @@ NEAR Crossword
 
 How to play with this contract
 ===============================
-1. Clone the repo and build it with `yarn build`
-2. Run `near dev-deploy` to deploy the contract to `testnet`.
-3. Create a crossword, let's say that the answer to your crossword is "many clever words"
-4. Answer for your crossword from now on will be a seed phrase! Let's generate key pair out of it.
+1. Clone the repo.
+
+```
+git clone https://github.com/near-examples/near-crossword.git
+cd near-crossword
+```
+
+2. Next, make sure you have NEAR CLI by running:
+
+  ```
+  near --version
+  ```
+
+  If you need to install `near-cli`:
+
+  ```
+  npm install near-cli -g
+  ```
+
+3. Build the smart contract
+
+```
+cd contract
+./build.sh
+```
+
+4. Run `near dev-deploy` to deploy the contract to `testnet`.
+5. Create a crossword, let's say that the answer to your crossword is "many clever words"
+6. Answer for your crossword from now on will be a seed phrase! Let's generate key pair out of it.
 
    ```bash
    near generate-key randomAccountId.testnet --seedPhrase='many clever words'
@@ -14,7 +39,7 @@ How to play with this contract
 
    Now this key pair will be store on your machine under `~/.near-credentials/testnet/randomAccountId.json`
 
-5. We should add your puzzle to our contract. To do that run
+7. We should add your puzzle to our contract. To do that run
    
    ```bash
    near call <contract-account-id> new_puzzle '{"answer_pk":"<generated-pk>"}' --accountId=<signer-acc-id> --deposit=10
@@ -27,7 +52,7 @@ How to play with this contract
    
    After this call your puzzle will be added to the NEAR Crossword contract. Share your Crossword with friends, the person who will be able to solve it will be able to generate the same key pair and get the reward. Let's do that in the following steps.
 
-6. Pretend that we have solved the puzzle and generated the very same key pair. This time it should be stored at `~/.near-credentials/testnet/<contract-id>.json`. We are using `<contract-id>` here because in the next step we will need to sign the transaction with this acc.
+8. Pretend that we have solved the puzzle and generated the very same key pair. This time it should be stored at `~/.near-credentials/testnet/<contract-id>.json`. We are using `<contract-id>` here because in the next step we will need to sign the transaction with this acc.
 
 Attention! If you are using the same machine, your old key pair from `<dev-acc>` will be overwritten! Save it in some other place if you need it. Keys are stored in `~/.near-credentials/testnet/` folder.
 
@@ -61,9 +86,6 @@ And now we can claim our reward:
 ```bash
 near call <contract-id> claim_reward '{"receiver_acc_id":"serhii.testnet", "crossword_pk":"<PK from randomAccountId account>", "memo":"Victory!"}' --accountId=<contract-id>
 ```
-
-
-This [React] app was initialized with [create-near-app]
 
 Quick Start
 ===========

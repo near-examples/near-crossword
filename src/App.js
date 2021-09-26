@@ -1,197 +1,168 @@
-import 'regenerator-runtime/runtime'
-import React from 'react'
-import { login, logout } from './utils'
-import './global.css'
+import './App.css';
+import React, { useCallback, useRef, useState } from 'react';
+import Crossword from 'react-crossword';
+import { parseSolutionSeedPhrase } from './utils';
+import { parseSeedPhrase } from 'near-seed-phrase';
+import * as nearAPI from "near-api-js";
+import { createGridData, loadGuesses } from "react-crossword/dist/es/util";
+import SimpleDark from './loader';
 
-import getConfig from './config'
-const { networkId } = getConfig(process.env.NODE_ENV || 'development')
+const App = ({ nearConfig, data }) => {
+  const crossword = useRef();
+  const [solvedPuzzle, setSolvedPuzzle] = useState(localStorage.getItem('playerSolvedPuzzle') || null);
+  const playerKeyPair = JSON.parse(localStorage.getItem('playerKeyPair'));
+  const crosswordSolutionPublicKey = localStorage.getItem('crosswordSolutionPublicKey');
+  const [showLoader, setShowLoader] = useState(false);
 
-export default function App() {
-  // use React Hooks to store greeting in component state
-  const [greeting, set_greeting] = React.useState()
+  async function claimPrize() {
+    const winner_account_id = document.getElementById('claim-account-id').value;
+    const memo = document.getElementById('claim-memo').value;
+    const keyStore = new nearAPI.keyStores.InMemoryKeyStore();
+    const keyPair = nearAPI.utils.key_pair.KeyPair.fromString(playerKeyPair.secretKey);
+    await keyStore.setKey(nearConfig.networkId, nearConfig.contractName, keyPair);
+    nearConfig.keyStore = keyStore;
+    const near = await nearAPI.connect(nearConfig);
+    const crosswordAccount = await near.account(nearConfig.contractName);
 
-  // when the user has not yet interacted with the form, disable the button
-  const [buttonDisabled, setButtonDisabled] = React.useState(true)
-
-  // after submitting the form, we want to show Notification
-  const [showNotification, setShowNotification] = React.useState(false)
-
-  // The useEffect hook can be used to fire side-effects during render
-  // Learn more: https://reactjs.org/docs/hooks-intro.html
-  React.useEffect(
-    () => {
-      // in this case, we only care to query the contract when signed in
-      if (window.walletConnection.isSignedIn()) {
-
-        // window.contract is set by initContract in index.js
-        window.contract.get_greeting({ account_id: window.accountId })
-          .then(greetingFromContract => {
-            set_greeting(greetingFromContract)
-          })
+    let transaction;
+    try {
+      setShowLoader(true);
+      transaction = await crosswordAccount.functionCall(
+        {
+          contractId: nearConfig.contractName,
+          methodName: 'claim_reward',
+          args: {
+            crossword_pk: solvedPuzzle,
+            receiver_acc_id: winner_account_id,
+            memo
+          },
+          gas: '300000000000000', // You may omit this for default gas
+          attachedDeposit: 0  // You may also omit this for no deposit
+        }
+      );
+      localStorage.removeItem('playerSolvedPuzzle');
+      localStorage.removeItem('guesses');
+      setSolvedPuzzle(false);
+    } catch (e) {
+      if (e.message.contains('Can not sign transactions for account')) {
+        // Someone has submitted the solution before the player!
+        console.log("Oof, that's rough, someone already solved this.")
       }
-    },
-
-    // The second argument to useEffect tells React when to re-run the effect
-    // Use an empty array to specify "only run on first render"
-    // This works because signing into NEAR Wallet reloads the page
-    []
-  )
-
-  // if not signed in, return early with sign-in prompt
-  if (!window.walletConnection.isSignedIn()) {
-    return (
-      <main>
-        <h1>Welcome to NEAR!</h1>
-        <p>
-          To make use of the NEAR blockchain, you need to sign in. The button
-          below will sign you in using NEAR Wallet.
-        </p>
-        <p>
-          By default, when your app runs in "development" mode, it connects
-          to a test network ("testnet") wallet. This works just like the main
-          network ("mainnet") wallet, but the NEAR Tokens on testnet aren't
-          convertible to other currencies – they're just for testing!
-        </p>
-        <p>
-          Go ahead and click the button below to try it out:
-        </p>
-        <p style={{ textAlign: 'center', marginTop: '2.5em' }}>
-          <button onClick={login}>Sign in</button>
-        </p>
-      </main>
-    )
+    } finally {
+      setShowLoader(false);
+      console.log('Transaction status:', transaction.status);
+      if (transaction.hasOwnProperty('transaction') &&
+          transaction.transaction.hasOwnProperty('hash')) {
+        console.log('Transaction hash:', transaction.transaction.hash);
+      }
+    }
   }
 
-  return (
-    // use React Fragment, <>, to avoid wrapping elements in unnecessary divs
-    <>
-      <button className="link" style={{ float: 'right' }} onClick={logout}>
-        Sign out
-      </button>
-      <main>
-        <h1>
-          <label
-            htmlFor="greeting"
-            style={{
-              color: 'var(--secondary)',
-              borderBottom: '2px solid var(--secondary)'
-            }}
-          >
-            {greeting}
-          </label>
-          {' '/* React trims whitespace around tags; insert literal space character when needed */}
-          {window.accountId}!
-        </h1>
-        <form onSubmit={async event => {
-          event.preventDefault()
+  const onCrosswordComplete = useCallback(
+    async (completeCount) => {
+      if (completeCount !== false) {
+        let gridData = createGridData(data).gridData;
+        loadGuesses(gridData, 'guesses');
+        await checkSolution(gridData);
+      }
+    },
+    []
+  );
 
-          // get elements from the form using their id attribute
-          const { fieldset, greeting } = event.target.elements
+  // This function is called when all entries are filled
+  async function checkSolution(gridData) {
+    let seedPhrase = parseSolutionSeedPhrase(data, gridData);
+    const { secretKey, publicKey } = parseSeedPhrase(seedPhrase);
+    // Compare crossword solution's public key with the known public key for this puzzle
+    // (It was given to us when we first fetched the puzzle in index.js)
+    if (publicKey === crosswordSolutionPublicKey) {
+      console.log("You're correct!");
+      // Send transaction TO the crossword puzzle smart contract FROM the crossword puzzle account.
+      // Learn more about access keys here: https://docs.near.org/docs/concepts/account#access-keys
+      const keyStore = new nearAPI.keyStores.InMemoryKeyStore();
+      const keyPair = nearAPI.utils.key_pair.KeyPair.fromString(secretKey);
+      await keyStore.setKey(nearConfig.networkId, nearConfig.contractName, keyPair);
+      nearConfig.keyStore = keyStore;
+      const near = await nearAPI.connect(nearConfig);
+      const crosswordAccount = await near.account(nearConfig.contractName);
 
-          // hold onto new user-entered value from React's SynthenticEvent for use after `await` call
-          const newGreeting = greeting.value
+      let playerPublicKey = playerKeyPair.publicKey;
+      console.log('Unique public key for you as the player: ', playerPublicKey);
 
-          // disable the form while the value gets updated on-chain
-          fieldset.disabled = true
-
-          try {
-            // make an update call to the smart contract
-            await window.contract.set_greeting({
-              // pass the value that the user entered in the greeting field
-              message: newGreeting
-            })
-          } catch (e) {
-            alert(
-              'Something went wrong! ' +
-              'Maybe you need to sign out and back in? ' +
-              'Check your browser console for more info.'
-            )
-            throw e
-          } finally {
-            // re-enable the form, whether the call succeeded or failed
-            fieldset.disabled = false
+      let transaction;
+      try {
+        setShowLoader(true);
+        transaction = await crosswordAccount.functionCall(
+          {
+            contractId: nearConfig.contractName,
+            methodName: 'submit_solution',
+            args: {
+              solver_pk: playerPublicKey,
+            },
+            gas: '300000000000000', // You may omit this for default gas
+            attachedDeposit: 0  // You may also omit this for no deposit
           }
-
-          // update local `greeting` variable to match persisted value
-          set_greeting(newGreeting)
-
-          // show Notification
-          setShowNotification(true)
-
-          // remove Notification again after css animation completes
-          // this allows it to be shown again next time the form is submitted
-          setTimeout(() => {
-            setShowNotification(false)
-          }, 11000)
-        }}>
-          <fieldset id="fieldset">
-            <label
-              htmlFor="greeting"
-              style={{
-                display: 'block',
-                color: 'var(--gray)',
-                marginBottom: '0.5em'
-              }}
-            >
-              Change greeting
-            </label>
-            <div style={{ display: 'flex' }}>
-              <input
-                autoComplete="off"
-                defaultValue={greeting}
-                id="greeting"
-                onChange={e => setButtonDisabled(e.target.value === greeting)}
-                style={{ flex: 1 }}
-              />
-              <button
-                disabled={buttonDisabled}
-                style={{ borderRadius: '0 5px 5px 0' }}
-              >
-                Save
-              </button>
-            </div>
-          </fieldset>
-        </form>
-        <p>
-          Look at that! A Hello World app! This greeting is stored on the NEAR blockchain. Check it out:
-        </p>
-        <ol>
-          <li>
-            Look in <code>src/App.js</code> and <code>src/utils.js</code> – you'll see <code>get_greeting</code> and <code>set_greeting</code> being called on <code>contract</code>. What's this?
-          </li>
-          <li>
-            Ultimately, this <code>contract</code> code is defined in <code>assembly/main.ts</code> – this is the source code for your <a target="_blank" rel="noreferrer" href="https://docs.near.org/docs/roles/developer/contracts/intro">smart contract</a>.</li>
-          <li>
-            When you run <code>yarn dev</code>, the code in <code>assembly/main.ts</code> gets deployed to the NEAR testnet. You can see how this happens by looking in <code>package.json</code> at the <code>scripts</code> section to find the <code>dev</code> command.</li>
-        </ol>
-        <hr />
-        <p>
-          To keep learning, check out <a target="_blank" rel="noreferrer" href="https://docs.near.org">the NEAR docs</a> or look through some <a target="_blank" rel="noreferrer" href="https://examples.near.org">example apps</a>.
-        </p>
-      </main>
-      {showNotification && <Notification />}
-    </>
-  )
+        );
+        localStorage.setItem('playerSolvedPuzzle', crosswordSolutionPublicKey);
+        setSolvedPuzzle(crosswordSolutionPublicKey);
+      } catch (e) {
+        if (e.message.contains('Can not sign transactions for account')) {
+          // Someone has submitted the solution before the player!
+          console.log("Oof, that's rough, someone already solved this.")
+        }
+      } finally {
+        setShowLoader(false);
+        console.log('Transaction status:', transaction.status);
+        console.log('Transaction hash:', transaction.transaction.hash);
+      }
+    } else {
+      console.log("That's not the correct solution. :/");
+    }
+  }
+  
+  if (showLoader) {
+    return (
+      <SimpleDark />
+    )
+  } else if (data && solvedPuzzle === null) {
+    return (
+      <div id="page">
+        <h1>NEAR Crossword Puzzle</h1>
+        <div id="crossword-wrapper">
+          <Crossword
+            data={data}
+            ref={crossword}
+            onCrosswordComplete={onCrosswordComplete}
+          />
+        </div>
+        <footer>
+          <p>Thank you <a href="https://github.com/JaredReisinger/react-crossword" target="_blank" rel="noreferrer">@jaredreisinger/react-crossword</a>!</p>
+        </footer>
+      </div>
+    );
+  } else if (solvedPuzzle) {
+    return (
+      <div id="page" className="claim">
+        <h1>You won!</h1>
+        <span className="important">You still need to claim your prize.</span>
+        <div className="claim-inputs">
+          <label htmlFor="claim-memo">Enter your winning memo:</label><br />
+          <input type="text" id="claim-memo" name="claim-memo" placeholder="Alice strikes again!" /><br />
+          <label htmlFor="claim-account-id">NEAR account (on {nearConfig.networkId}) to claim prize:</label><br />
+          <input type="text" id="claim-account-id" name="claim-account-id" />
+          <input type="submit" id="claim-button" className="btn btn-submit" onClick={claimPrize} />
+        </div>
+      </div>
+    );
+  } else if (!solvedPuzzle) {
+    return (
+      <div id="page" className="no-puzzles">
+        <h1>All puzzles have been solved</h1>
+        <p>Sorry friend, no crossword puzzles available at this time.</p>
+        <p>In the meantime, check out the other <a href="https://near.dev">NEAR examples</a>. :)</p>
+      </div>
+    );
+  }
 }
 
-// this component gets rendered by App after the form is submitted
-function Notification() {
-  const urlPrefix = `https://explorer.${networkId}.near.org/accounts`
-  return (
-    <aside>
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.accountId}`}>
-        {window.accountId}
-      </a>
-      {' '/* React trims whitespace around tags; insert literal space character when needed */}
-      called method: 'set_greeting' in contract:
-      {' '}
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.contract.contractId}`}>
-        {window.contract.contractId}
-      </a>
-      <footer>
-        <div>✔ Succeeded</div>
-        <div>Just now</div>
-      </footer>
-    </aside>
-  )
-}
+export default App;
