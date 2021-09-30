@@ -1,6 +1,7 @@
 // This function takes the input from the Rust smart contract
 // and turns it into what the crossword library would like.
 // Opportunity to enhance the library so this isn't necessary.
+
 import * as nearAPI from 'near-api-js';
 
 function mungeBlockchainCrossword(chainData) {
@@ -66,6 +67,12 @@ function parseSolutionSeedPhrase(data, gridData) {
   return finalSeedPhrase;
 }
 
+// Taken from Mozilla docs here:
+// https://developer.mozilla.org/en-US/docs/Glossary/Base64#solution_1_%E2%80%93_escaping_the_string_before_encoding_it
+function b64toUtf8(str) {
+  return decodeURIComponent(escape(window.atob(str)));
+}
+
 /* Example of expected data for crossword library
   export const data = {
     across: {
@@ -90,5 +97,6 @@ function parseSolutionSeedPhrase(data, gridData) {
 module.exports = {
   mungeBlockchainCrossword,
   viewMethodOnContract,
-  parseSolutionSeedPhrase
+  parseSolutionSeedPhrase,
+  b64ToUtf8: b64toUtf8
 };
