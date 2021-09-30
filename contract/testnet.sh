@@ -5,7 +5,7 @@
 export NEAR_ACCT=xword.demo.testnet
 near delete $NEAR_ACCT demo.testnet
 near create-account $NEAR_ACCT --masterAccount demo.testnet
-near deploy $NEAR_ACCT --wasmFile /Users/mike/near/near-crossword/contract/res/crossword.wasm
+near deploy $NEAR_ACCT --wasmFile /Users/mike/near/near-crossword/contract/res/crossword.wasm --initFunction new --initArgs '{"creator_account": "linkdrop.demo.testnet"}'
 echo "Keys before:"
 near keys $NEAR_ACCT
 near call $NEAR_ACCT new_puzzle '{
@@ -116,9 +116,9 @@ near call $NEAR_ACCT new_puzzle '{
      "clue": "clue for dao"
    }
   ]
-}' --accountId mike.testnet
+}' --accountId mike.testnet --deposit 10
 
-echo "Keys after"
-near keys $NEAR_ACCT
-near view $NEAR_ACCT get_unsolved_puzzles
-near view $NEAR_ACCT debug_get_puzzle '{"pk": "ed25519:CpqWpFLps6zNNXSwn9ZYgvTgSVQ598fn1kWXgjcA2uLp"}'
+#echo "Keys after"
+#near keys $NEAR_ACCT
+#near view $NEAR_ACCT get_unsolved_puzzles
+#near view $NEAR_ACCT debug_get_puzzle '{"pk": "ed25519:CpqWpFLps6zNNXSwn9ZYgvTgSVQ598fn1kWXgjcA2uLp"}'
