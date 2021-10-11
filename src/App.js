@@ -17,11 +17,7 @@ const App = ({ nearConfig, data, creatorAccount }) => {
   const [claimError, setClaimError] = useState('');
 
   async function claimAccountType(e) {
-    if (e.target.value === 'create-account') {
-      setNeedsNewAccount(true);
-    } else {
-      setNeedsNewAccount(false);
-    }
+    setNeedsNewAccount(e.target.value === 'create-account');
   }
 
   async function claimPrize() {
