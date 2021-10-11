@@ -17,11 +17,7 @@ const App = ({ nearConfig, data, creatorAccount }) => {
   const [claimError, setClaimError] = useState('');
 
   async function claimAccountType(e) {
-    if (e.target.value === 'create-account') {
-      setNeedsNewAccount(true);
-    } else {
-      setNeedsNewAccount(false);
-    }
+    setNeedsNewAccount(e.target.value === 'create-account');
   }
 
   async function claimPrize() {
@@ -89,29 +85,20 @@ const App = ({ nearConfig, data, creatorAccount }) => {
       const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
       if (tx_succeeded) {
         let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
-        if (needsNewAccount) {
-          // Look for base64-encoded "false"
-          if (tx_success_value === 'true') {
-            // This tells the React app that it's solved and claimed
-            setSolvedPuzzle(false);
-            setClaimError('');
+        // Look for base64-encoded "false"
+        if (tx_success_value === 'true') {
+          // This tells the React app that it's solved and claimed
+          setSolvedPuzzle(false);
+          setClaimError('');
 
-            // Clean up and get ready for next puzzle
-            localStorage.removeItem('playerSolvedPuzzle');
-            localStorage.removeItem('guesses');
-          } else {
-            setClaimError('Could not create that account, please try another account name.');
-          }
+          // Clean up and get ready for next puzzle
+          localStorage.removeItem('playerSolvedPuzzle');
+          localStorage.removeItem('guesses');
         } else {
-          if (tx_success_value === 'true') {
-            // This tells the React app that it's solved and claimed
-            setSolvedPuzzle(false);
-            setClaimError('');
-            // Clean up and get ready for next puzzle
-            localStorage.removeItem('playerSolvedPuzzle');
-            localStorage.removeItem('guesses');
-          } else {
-            setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.")
+          if (needsNewAccount) {
+            setClaimError('Could not create that account, please try another account name.');
+          } else { 
+            setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.");
           }
         }
       } else {
