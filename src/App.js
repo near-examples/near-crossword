@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useCallback, useRef, useState } from 'react';
 import Crossword from 'react-crossword';
-import { parseSolutionSeedPhrase, b64ToUtf8 } from './utils';
+import { parseSolutionSeedPhrase, b64toUtf8 } from './utils';
 import { parseSeedPhrase } from 'near-seed-phrase';
 import * as nearAPI from "near-api-js";
 import { createGridData, loadGuesses } from "react-crossword/dist/es/util";
@@ -88,7 +88,7 @@ const App = ({ nearConfig, data, creatorAccount }) => {
       console.log('Transaction status:', transaction.status);
       const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
       if (tx_succeeded) {
-        let tx_success_value = b64ToUtf8(transaction.status.SuccessValue);
+        let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
         if (needsNewAccount) {
           // Look for base64-encoded "false"
           if (tx_success_value === 'true') {
