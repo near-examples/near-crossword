@@ -1,7 +1,7 @@
 mod debugging;
 
 use near_sdk::collections::{LookupMap, UnorderedSet};
-use near_sdk::serde_json::{self};
+use near_sdk::serde_json;
 use near_sdk::{
     borsh::{self, BorshDeserialize, BorshSerialize},
     ext_contract, log,
