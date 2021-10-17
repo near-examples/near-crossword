@@ -18,10 +18,10 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "env-cmd -f ./neardev/dev-account.env parcel src/index.html",
+    "start": "parcel src/index.html",
     "build:contract": "cd contract && cargo build --target wasm32-unknown-unknown --release",
     "build:web": "parcel build ./src/index.html --public-url ./ --no-minify",
-    "dev": "npm run dev-deploy && npm start",
+    "dev": "npm run dev-deploy && env-cmd -f ./neardev/dev-account.env && npm start",
     "dev-deploy": "near dev-deploy contract/res/crossword.wasm",
     "postdev-deploy": "env-cmd -f ./neardev/dev-account.env node new-puzzle.js",
     "test": "react-scripts test",

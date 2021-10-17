@@ -77,3 +77,50 @@ span.important {
     margin: 0 auto;
     width: 576px;
 }
+
+#claim-status {
+    background-color: #ff585d;
+    border-radius: 6px;
+}
+
+#claim-status.hide {
+    display: none;
+}
+
+#claim-status.show {
+    display: block;
+}
+
+#claim-status p {
+    padding: 1.5em;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#seed-phrase-wrapper {
+    background-color: #FAF8D1;
+    border-radius: 6px;
+}
+
+#seed-phrase-wrapper.hide {
+    display: none;
+}
+
+#seed-phrase-wrapper.show {
+    display: block;
+}
+
+#seed-phrase-wrapper h3 {
+    padding: .5em .5em 0;
+}
+
+#seed-phrase-wrapper p {
+    padding: .5em;
+    font-size: 1.3em;
+}
+
+#seed-phrase-wrapper #seed-phrase {
+    font-size: 1.7em;
+    color: #ff585d;
+}

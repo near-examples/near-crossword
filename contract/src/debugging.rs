@@ -1,8 +1,8 @@
 use crate::*;
 
-use near_sdk::{near_bindgen, PublicKey};
 use near_sdk::json_types::Base58PublicKey;
 use near_sdk::log;
+use near_sdk::{near_bindgen, PublicKey};
 
 #[near_bindgen]
 impl Crossword {

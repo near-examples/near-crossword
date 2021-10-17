@@ -1,18 +1,24 @@
 import './App.css';
 import React, { useCallback, useRef, useState } from 'react';
 import Crossword from 'react-crossword';
-import { parseSolutionSeedPhrase } from './utils';
+import { parseSolutionSeedPhrase, b64toUtf8 } from './utils';
 import { parseSeedPhrase } from 'near-seed-phrase';
 import * as nearAPI from "near-api-js";
 import { createGridData, loadGuesses } from "react-crossword/dist/es/util";
 import SimpleDark from './loader';
 
-const App = ({ nearConfig, data }) => {
+const App = ({ nearConfig, data, creatorAccount }) => {
   const crossword = useRef();
   const [solvedPuzzle, setSolvedPuzzle] = useState(localStorage.getItem('playerSolvedPuzzle') || null);
   const playerKeyPair = JSON.parse(localStorage.getItem('playerKeyPair'));
   const crosswordSolutionPublicKey = localStorage.getItem('crosswordSolutionPublicKey');
   const [showLoader, setShowLoader] = useState(false);
+  const [needsNewAccount, setNeedsNewAccount] = useState(false);
+  const [claimError, setClaimError] = useState('');
+
+  async function claimAccountType(e) {
+    setNeedsNewAccount(e.target.value === 'create-account');
+  }
 
   async function claimPrize() {
     const winner_account_id = document.getElementById('claim-account-id').value;
@@ -27,30 +33,80 @@ const App = ({ nearConfig, data }) => {
     let transaction;
     try {
       setShowLoader(true);
-      transaction = await crosswordAccount.functionCall(
-        {
-          contractId: nearConfig.contractName,
-          methodName: 'claim_reward',
-          args: {
-            crossword_pk: solvedPuzzle,
-            receiver_acc_id: winner_account_id,
-            memo
-          },
-          gas: '300000000000000', // You may omit this for default gas
-          attachedDeposit: 0  // You may also omit this for no deposit
-        }
-      );
-      localStorage.removeItem('playerSolvedPuzzle');
-      localStorage.removeItem('guesses');
-      setSolvedPuzzle(false);
+
+      // Call a different method depending on if the user wants to create an account or not
+      if (needsNewAccount) {
+        // There's a public key stored in local storage.
+        // This was created when the user first opened the crossword puzzle.
+        // They'll need to have written down their seed phrase
+        // We pass the public key into the `new_pk` parameter
+
+        transaction = await crosswordAccount.functionCall(
+          {
+            contractId: nearConfig.contractName,
+            methodName: 'claim_reward_new_account',
+            args: {
+              crossword_pk: solvedPuzzle,
+              new_acc_id: winner_account_id,
+              new_pk: playerKeyPair.publicKey,
+              memo
+            },
+            gas: '300000000000000', // You may omit this for default gas
+            attachedDeposit: 0  // You may also omit this for no deposit
+          }
+        );
+      } else {
+        transaction = await crosswordAccount.functionCall(
+          {
+            contractId: nearConfig.contractName,
+            methodName: 'claim_reward',
+            args: {
+              crossword_pk: solvedPuzzle,
+              receiver_acc_id: winner_account_id,
+              memo
+            },
+            gas: '300000000000000', // You may omit this for default gas
+            attachedDeposit: 0  // You may also omit this for no deposit
+          }
+        );
+      }
     } catch (e) {
+      console.error('Unexpected error when claiming', e);
       if (e.message.contains('Can not sign transactions for account')) {
         // Someone has submitted the solution before the player!
         console.log("Oof, that's rough, someone already solved this.")
       }
     } finally {
       setShowLoader(false);
+      // See if the transaction succeeded during transfer
+      // or succeeded when creating a new account.
+      // If unsuccessful, let the user try again.
       console.log('Transaction status:', transaction.status);
+      const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
+      if (tx_succeeded) {
+        let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
+        // Look for base64-encoded "false"
+        if (tx_success_value === 'true') {
+          // This tells the React app that it's solved and claimed
+          setSolvedPuzzle(false);
+          setClaimError('');
+
+          // Clean up and get ready for next puzzle
+          localStorage.removeItem('playerSolvedPuzzle');
+          localStorage.removeItem('guesses');
+        } else {
+          if (needsNewAccount) {
+            setClaimError('Could not create that account, please try another account name.');
+          } else { 
+            setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.");
+          }
+        }
+      } else {
+        // Transaction failed
+        setClaimError(`Error with transaction: ${transaction.status.Failure}`);
+        console.log('Error with transaction', transaction.status.Failure);
+      }
+
       if (transaction.hasOwnProperty('transaction') &&
           transaction.transaction.hasOwnProperty('hash')) {
         console.log('Transaction hash:', transaction.transaction.hash);
@@ -119,7 +175,12 @@ const App = ({ nearConfig, data }) => {
       console.log("That's not the correct solution. :/");
     }
   }
-  
+
+  // There are four different "pages"
+  // 1. The "loading screen" when transactions are hitting the blockchain
+  // 2. The crossword puzzle interface, shown when there's a crossword puzzle to solve
+  // 3. The crossword puzzle has been solved, and the reward needs to be claimed
+  // 4. There are no crossword puzzles to solve and this user has claimed any they won
   if (showLoader) {
     return (
       <SimpleDark />
@@ -141,14 +202,36 @@ const App = ({ nearConfig, data }) => {
       </div>
     );
   } else if (solvedPuzzle) {
+    let claimStatusClasses = 'hide';
+    if (claimError !== '') {
+      claimStatusClasses = 'show';
+    }
+    let seedPhraseClasses = 'hide';
+    if (needsNewAccount) {
+      seedPhraseClasses = 'show';
+    }
     return (
       <div id="page" className="claim">
         <h1>You won!</h1>
         <span className="important">You still need to claim your prize.</span>
+        <div id="claim-status" className={claimStatusClasses}><p>{claimError}</p></div>
         <div className="claim-inputs">
           <label htmlFor="claim-memo">Enter your winning memo:</label><br />
           <input type="text" id="claim-memo" name="claim-memo" placeholder="Alice strikes again!" /><br />
-          <label htmlFor="claim-account-id">NEAR account (on {nearConfig.networkId}) to claim prize:</label><br />
+          <div>
+            <input type="radio" id="have-account" name="account-funding-radio" value="have-account" checked={needsNewAccount === false} onChange={claimAccountType} />
+            <label htmlFor="have-account">I have an account</label>
+          </div>
+          <div>
+            <input type="radio" id="create-account" name="account-funding-radio" value="create-account" checked={needsNewAccount === true} onChange={claimAccountType} />
+            <label htmlFor="create-account">I need to create an account</label>
+          </div>
+          <div id="seed-phrase-wrapper" className={seedPhraseClasses}>
+            <h3>You need to write this down, friend.</h3>
+            <p id="seed-phrase">{playerKeyPair.seedPhrase}</p>
+            <p>After you submit and it succeeds, use this seed phrase at <a href={nearConfig.walletUrl} target="_blank">NEAR Wallet</a></p>
+          </div>
+          <label htmlFor="claim-account-id">Account name:</label><br />
           <input type="text" id="claim-account-id" name="claim-account-id" />
           <input type="submit" id="claim-button" className="btn btn-submit" onClick={claimPrize} />
         </div>
