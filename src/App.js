@@ -6,6 +6,8 @@ import { parseSeedPhrase } from 'near-seed-phrase';
 import * as nearAPI from "near-api-js";
 import { createGridData, loadGuesses } from "react-crossword/dist/es/util";
 import SimpleDark from './loader';
+import { ThemeProvider } from 'styled-components';
+
 
 const App = ({ nearConfig, data, creatorAccount }) => {
   const crossword = useRef();
@@ -200,19 +202,33 @@ const App = ({ nearConfig, data, creatorAccount }) => {
     )
   } else if (data && solvedPuzzle === null) {
     return (
-      <div id="page">
-        <h1>NEAR Crossword Puzzle</h1>
-        <div id="crossword-wrapper">
-          <Crossword
-            data={data}
-            ref={crossword}
-            onCrosswordComplete={onCrosswordComplete}
-          />
+        <div className="wrapper">
+          <header className="site-header">
+            <div className="site-logo">
+              <a href="#">
+                <img src="./img/logo.png" width="271" alt="Near Crossword Puzzle"/>
+              </a>
+            </div>
+          </header>
+          <main className="main-area">
+            <div className="content">
+              <ThemeProvider
+                  theme={{
+                    columnBreakpoint   : '9999px',
+                    gridBackground     : '#fff',
+                    cellBackground     : '#D5D5D5',
+                    cellBorder         : '#D5D5D5',
+                    textColor          : '#000000',
+                    numberColor        : '#000000',
+                    focusBackground    : 'rgba(170, 208, 85, 0.5)',
+                    highlightBackground: 'rgba(255, 200, 96, 0.5)',
+                  }}
+              >
+                <Crossword data={data}/>
+              </ThemeProvider>
+            </div>
+          </main>
         </div>
-        <footer>
-          <p>Thank you <a href="https://github.com/JaredReisinger/react-crossword" target="_blank" rel="noreferrer">@jaredreisinger/react-crossword</a>!</p>
-        </footer>
-      </div>
     );
   } else if (solvedPuzzle) {
     let claimStatusClasses = 'hide';
@@ -232,7 +248,7 @@ const App = ({ nearConfig, data, creatorAccount }) => {
           <label htmlFor="claim-memo">Enter your winning memo:</label><br />
           <input type="text" id="claim-memo" name="claim-memo" placeholder="Alice strikes again!" /><br />
           <div>
-            <input type="radio" id="have-account" name="account-funding-radio" value="have-account" checked={needsNewAccount === false} onChange={claimAccountType} />
+            <input ty pe="radio" id="have-account" name="account-funding-radio" value="have-account" checked={needsNewAccount === false} onChange={claimAccountType} />
             <label htmlFor="have-account">I have an account</label>
           </div>
           <div>
