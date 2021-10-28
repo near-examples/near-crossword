@@ -6,20 +6,22 @@ const CrosswordPage = ({data}) => {
     return (
 
         <div className="content">
-            <ThemeProvider
-                theme={{
-                    columnBreakpoint   : '9999px',
-                    gridBackground     : '#fff',
-                    cellBackground     : '#D5D5D5',
-                    cellBorder         : '#D5D5D5',
-                    textColor          : '#000000',
-                    numberColor        : '#000000',
-                    focusBackground    : 'rgba(170, 208, 85, 0.5)',
-                    highlightBackground: 'rgba(255, 200, 96, 0.5)',
-                }}
-            >
-                <Crossword data={data}/>
-            </ThemeProvider>
+            <div style={{ width: '100vw' }}>
+                <ThemeProvider
+                    theme={{
+                        columnBreakpoint   : '9999px',
+                        gridBackground     : '#fff',
+                        cellBackground     : '#D5D5D5',
+                        cellBorder         : '#D5D5D5',
+                        textColor          : '#000000',
+                        numberColor        : '#000000',
+                        focusBackground    : 'rgba(170, 208, 85, 0.5)',
+                        highlightBackground: 'rgba(255, 200, 96, 0.5)',
+                    }}
+                >
+                    <Crossword data={data}/>
+                </ThemeProvider>
+            </div>
         </div>
             
     );
