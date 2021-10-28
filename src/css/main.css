@@ -318,9 +318,13 @@ button[type=submit]:hover,
 }
 .main-area .clues .direction {
   margin: 0 50px;
-  font-size: 11px;
+  font-size: 14px;
 }
 .main-area .clues .direction h3 {
-  font-size: 13px;
+  font-size: 14px;
   color: #000;
+}
+
+.main-area .grid [text-anchor="start"] {
+  font-size: 41% !important;
 }
