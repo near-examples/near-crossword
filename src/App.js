@@ -7,11 +7,13 @@ import {createGridData, loadGuesses} from "react-crossword/dist/es/util";
 import SimpleDark from './loader';
 import CrosswordPage from "./components/CrosswordPage";
 import NoCrosswordsPage from "./components/NoCrosswordsPage";
+import WonPage from "./components/WonPage";
 
 const logo = require('./img/logo.png')
 
 
 const App = ({nearConfig, data, creatorAccount}) => {
+    console.log('data: ', data)
     const crossword = useRef();
     const [solvedPuzzle, setSolvedPuzzle] = useState(localStorage.getItem('playerSolvedPuzzle') || null);
     const playerKeyPair = JSON.parse(localStorage.getItem('playerKeyPair'));
@@ -20,13 +22,7 @@ const App = ({nearConfig, data, creatorAccount}) => {
     const [needsNewAccount, setNeedsNewAccount] = useState(false);
     const [claimError, setClaimError] = useState('');
 
-    async function claimAccountType(e) {
-        if (e.target.value === 'create-account') {
-            setNeedsNewAccount(true);
-        } else {
-            setNeedsNewAccount(false);
-        }
-    }
+
 
     async function claimPrize() {
         const winner_account_id = document.getElementById('claim-account-id').value;
@@ -193,14 +189,14 @@ const App = ({nearConfig, data, creatorAccount}) => {
         }
     }
 
-  let claimStatusClasses = 'hide';
-  if (claimError !== '') {
-    claimStatusClasses = 'show';
-  }
-  let seedPhraseClasses = 'hide';
-  if (needsNewAccount) {
-    seedPhraseClasses = 'show';
-  }
+    let claimStatusClasses = 'hide';
+    if (claimError !== '') {
+        claimStatusClasses = 'show';
+    }
+    let seedPhraseClasses = 'hide';
+    if (needsNewAccount) {
+        seedPhraseClasses = 'show';
+    }
 
     // There are four different "pages"
     // 1. The "loading screen" when transactions are hitting the blockchain
@@ -217,40 +213,25 @@ const App = ({nearConfig, data, creatorAccount}) => {
                 </div>
             </header>
             <main className="main-area">
-              {showLoader &&(<SimpleDark/>)}
-              {data && solvedPuzzle === null &&(<CrosswordPage data={data}/>)}
-              {solvedPuzzle && (
-                  <div id="page" className="claim">
-                <h1>You won!</h1>
-                <span className="important">You still need to claim your prize.</span>
-                <div id="claim-status" className={claimStatusClasses}><p>{claimError}</p></div>
-                <div className="claim-inputs">
-                  <label htmlFor="claim-memo">Enter your winning memo:</label><br/>
-                  <input type="text" id="claim-memo" name="claim-memo" placeholder="Alice strikes again!"/><br/>
-                  <div>
-                    <input type="radio" id="have-account" name="account-funding-radio" value="have-account"
-                           checked={needsNewAccount === false} onChange={claimAccountType}/>
-                    <label htmlFor="have-account">I have an account</label>
-                  </div>
-                  <div>
-                    <input type="radio" id="create-account" name="account-funding-radio" value="create-account"
-                           checked={needsNewAccount === true} onChange={claimAccountType}/>
-                    <label htmlFor="create-account">I need to create an account</label>
-                  </div>
-                  <div id="seed-phrase-wrapper" className={seedPhraseClasses}>
-                    <h3>You need to write this down, friend.</h3>
-                    <p id="seed-phrase">{playerKeyPair.seedPhrase}</p>
-                    <p>After you submit and it succeeds, use this seed phrase at <a href={nearConfig.walletUrl}
-                                                                                    target="_blank">NEAR Wallet</a>
-                    </p>
-                  </div>
-                  <label htmlFor="claim-account-id">Account name:</label><br/>
-                  <input type="text" id="claim-account-id" name="claim-account-id"/>
-                  <input type="submit" id="claim-button" className="btn btn-submit" onClick={claimPrize}/>
-                </div>
-              </div>
-              )}
-              {!data && !solvedPuzzle &&(<NoCrosswordsPage/>)}
+                {showLoader && ( <SimpleDark/> )}
+                {data && solvedPuzzle === null && (
+                    <CrosswordPage
+                        data={data}
+                        setSolvedPuzzle={setSolvedPuzzle}
+                        onCrosswordComplete={onCrosswordComplete}
+                    /> )}
+                {solvedPuzzle && (
+                    <WonPage
+                        claimStatusClasses={claimStatusClasses}
+                        claimError={claimError}
+                        needsNewAccount={needsNewAccount}
+                        setNeedsNewAccount={setNeedsNewAccount}
+                        claimPrize={claimPrize}
+                        playerKeyPair={playerKeyPair}
+                        nearConfig={nearConfig}
+                    />
+                )}
+                {!data && !solvedPuzzle && ( <NoCrosswordsPage/> )}
             </main>
         </div>
     );

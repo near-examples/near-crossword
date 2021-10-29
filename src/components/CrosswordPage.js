@@ -2,7 +2,7 @@ import {ThemeProvider} from "styled-components";
 import Crossword from "react-crossword";
 import React from 'react';
 
-const CrosswordPage = ({data}) => {
+const CrosswordPage = ({data,setSolvedPuzzle, onCrosswordComplete}) => {
     return (
 
         <div className="content">
@@ -19,11 +19,13 @@ const CrosswordPage = ({data}) => {
                         highlightBackground: 'rgba(255, 200, 96, 0.5)',
                     }}
                 >
-                    <Crossword data={data}/>
+                    <Crossword data={data} onCrosswordComplete={onCrosswordComplete}/>
+                    <a href="#" onClick={()=>setSolvedPuzzle(true)}>Won page</a>
                 </ThemeProvider>
+
             </div>
         </div>
-            
+
     );
 }
 

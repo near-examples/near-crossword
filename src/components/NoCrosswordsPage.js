@@ -1,3 +1,5 @@
+import React from 'react';
+
 const NoCrosswordsPage = () => {
     return (
         <div className="container">
