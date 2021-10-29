@@ -305,7 +305,7 @@ button[type=submit]:hover,
 
 .main-area .grid {
   /*max-width: 567px;*/
-  max-width: 49vh;
+  max-width: 45vh;
   min-width: 290px;
   width: calc(100% - 30px);
   margin: 0 auto;
