@@ -50,7 +50,7 @@ const WonPage = ({
                                 checked={needsNewAccount === true}
                                 onChange={claimAccountType}
                             />
-                            <label htmlFor="no-account">I need to create an account</label>
+                            <label htmlFor="create-account">I need to create an account</label>
                         </div>
                     </div>
                     <div id="seed-phrase-wrapper" className="field-group">

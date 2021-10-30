@@ -57,17 +57,17 @@ span.important {
     font-size: 1.3em;
 }
 
-#claim-memo, #claim-account-id, .btn {
-    border-radius: 5px;
-    border: .1em solid #000;
-    padding: .5em 1em;
-    font-size: 1.66em;
-    margin: .5em;
-}
+/*#claim-memo, #claim-account-id, .btn {*/
+/*    border-radius: 5px;*/
+/*    border: .1em solid #000;*/
+/*    padding: .5em 1em;*/
+/*    font-size: 1.66em;*/
+/*    margin: .5em;*/
+/*}*/
 
-.claim-inputs .btn {
-    margin: .5em;
-}
+/*.claim-inputs .btn {*/
+/*    margin: .5em;*/
+/*}*/
 
 #page h1, #page.no-puzzles {
     text-align: center;
