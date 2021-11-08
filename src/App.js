@@ -8,6 +8,7 @@ import SimpleDark from './loader';
 import CrosswordPage from "./components/CrosswordPage";
 import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
+import SuccessPage from "./components/SuccessPage";
 
 const logo = require('./img/logo.png')
 
@@ -21,7 +22,6 @@ const App = ({nearConfig, data, creatorAccount}) => {
     const [showLoader, setShowLoader] = useState(false);
     const [needsNewAccount, setNeedsNewAccount] = useState(false);
     const [claimError, setClaimError] = useState('');
-
 
 
     async function claimPrize(e) {
@@ -232,6 +232,9 @@ const App = ({nearConfig, data, creatorAccount}) => {
                         playerKeyPair={playerKeyPair}
                         nearConfig={nearConfig}
                     />
+                )}
+                {solvedPuzzle === false  && claimError === '' && (
+                    <SuccessPage/>
                 )}
                 {!data && !solvedPuzzle && ( <NoCrosswordsPage/> )}
             </main>

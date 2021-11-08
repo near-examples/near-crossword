@@ -20,7 +20,6 @@ const CrosswordPage = ({data,setSolvedPuzzle, onCrosswordComplete}) => {
                     }}
                 >
                     <Crossword data={data} onCrosswordComplete={onCrosswordComplete}/>
-                    <a href="#" onClick={()=>setSolvedPuzzle(true)}>Won page</a>
                 </ThemeProvider>
 
             </div>
