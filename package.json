@@ -6,6 +6,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "env-cmd": "^10.1.0",
+    "framer-motion": "^5.2.1",
     "near-api-js": "^0.42.0",
     "near-cli": "^2.1.1",
     "near-seed-phrase": "github:near/near-seed-phrase",

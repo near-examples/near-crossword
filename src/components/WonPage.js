@@ -1,4 +1,7 @@
 import React from "react";
+// import {Motion, spring} from "react-motion";
+import {motion} from 'framer-motion/dist/framer-motion';
+
 
 const WonPage = ({
                      claimStatusClasses,
@@ -9,6 +12,16 @@ const WonPage = ({
                      playerKeyPair,
                      nearConfig
                  }) => {
+
+    console.log({
+                    claimStatusClasses,
+                    claimError,
+                    needsNewAccount,
+                    setNeedsNewAccount,
+                    claimPrize,
+                    playerKeyPair,
+                    nearConfig
+                });
 
     async function claimAccountType(e) {
         if (e.target.value === 'create-account') {
@@ -38,7 +51,7 @@ const WonPage = ({
                                 value="have-account"
                                 checked={needsNewAccount === false}
                                 onChange={claimAccountType}
-                           />
+                            />
                             <label htmlFor="have-account">I have an account</label>
                         </div>
                         <div className="radio-field">
@@ -53,18 +66,45 @@ const WonPage = ({
                             <label htmlFor="create-account">I need to create an account</label>
                         </div>
                     </div>
-                    <div id="seed-phrase-wrapper" className="field-group">
+
+
+                    <motion.div
+                        id="seed-phrase-wrapper"
+                        className="field-group"
+                        animate={{
+                            opacity: needsNewAccount === true ? 1 : 0,
+                            transitionEnd: {
+                                display: needsNewAccount === true?"block":"none",
+                            },
+                        }}
+                        transition={{duration: 0.5}}
+
+                    >
                         <h3>You need to write this down, friend.</h3>
                         <p id="seed-phrase">{playerKeyPair.seedPhrase}</p>
-                        <p>After you submit and it succeeds, use this seed phrase at <a href={nearConfig.walletUrl}
-                                                                                        target="_blank">NEAR Wallet</a>
+                        <p>After you submit and it succeeds, use this seed phrase at <a
+                            href={nearConfig.walletUrl}
+                            target="_blank">NEAR Wallet</a>
                         </p>
-                    </div>
-                    <div className="field-group">
+                    </motion.div>
+
+
+                    <motion.div
+                        className="field-group"
+                        animate={{
+                            opacity: needsNewAccount === false ? 1 : 0,
+                            transitionEnd: {
+                                display: needsNewAccount === false?"block":"none",
+                            },
+                        }}
+                        transition={{duration: 0.5}}
+                    >
                         <label htmlFor="claim-account-id" className="sr-only">Enter account name</label>
                         <input type="text" id="claim-account-id" name="claim-account-id"
                                placeholder="Enter account name"/>
-                    </div>
+                    </motion.div>
+
+
                     <button type="submit" id="claim-button" onClick={claimPrize}>Submit</button>
                 </form>
             </div>
