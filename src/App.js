@@ -24,7 +24,8 @@ const App = ({nearConfig, data, creatorAccount}) => {
 
 
 
-    async function claimPrize() {
+    async function claimPrize(e) {
+        e.preventDefault();
         const winner_account_id = document.getElementById('claim-account-id').value;
         const memo = document.getElementById('claim-memo').value;
         const keyStore = new nearAPI.keyStores.InMemoryKeyStore();
@@ -73,6 +74,7 @@ const App = ({nearConfig, data, creatorAccount}) => {
                         attachedDeposit: 0  // You may also omit this for no deposit
                     }
                 );
+                console.log('transaction: ', transaction)
             }
         } catch (e) {
             console.error('Unexpected error when claiming', e);

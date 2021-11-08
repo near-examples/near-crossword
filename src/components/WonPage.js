@@ -13,16 +13,6 @@ const WonPage = ({
                      nearConfig
                  }) => {
 
-    console.log({
-                    claimStatusClasses,
-                    claimError,
-                    needsNewAccount,
-                    setNeedsNewAccount,
-                    claimPrize,
-                    playerKeyPair,
-                    nearConfig
-                });
-
     async function claimAccountType(e) {
         if (e.target.value === 'create-account') {
             setNeedsNewAccount(true);

@@ -7,7 +7,7 @@ const NoCrosswordsPage = () => {
             <div className="error-msg">Sorry friend, no crossword puzzles available at this time. In the meantime,<br/>check
                 out the other NEAR examples. :)
             </div>
-            <div className="content"><a href="#" className="btn">NEAR Examples</a></div>
+            <div className="content"><a href="https://examples.near.org/" className="btn">NEAR Examples</a></div>
         </div>
     )
 }
