@@ -209,6 +209,7 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 24px;
   padding-bottom: 24px;
 }
 

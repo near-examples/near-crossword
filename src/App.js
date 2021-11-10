@@ -10,7 +10,7 @@ import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
 import SuccessPage from "./components/SuccessPage";
 
-const logo = require('./img/logo.png')
+const logo = require('./img/logo_v2.png')
 
 
 const App = ({nearConfig, data, creatorAccount}) => {
