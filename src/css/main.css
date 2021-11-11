@@ -209,8 +209,9 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 24px;
-  padding-bottom: 24px;
+  /*padding-top: 24px;*/
+  padding-top: 48px;
+  /*padding-bottom: 24px;*/
 }
 
 .field-group {
@@ -304,12 +305,15 @@ button[type=submit]:hover,
   color: #DB5555;
 }
 
+/*.site-logo { padding-top: 100px; }*/
+
 .main-area .grid {
   /*max-width: 567px;*/
-  max-width: 45vh;
+  /*max-width: 45vh;*/
   min-width: 290px;
   width: calc(100% - 30px);
   margin: 0 auto;
+  max-width: 70vh;
 }
 .main-area .clues {
   background: #F5F5F5;
