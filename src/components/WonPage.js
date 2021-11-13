@@ -78,20 +78,11 @@ const WonPage = ({
                     </motion.div>
 
 
-                    <motion.div
-                        className="field-group"
-                        animate={{
-                            opacity: needsNewAccount === false ? 1 : 0,
-                            transitionEnd: {
-                                display: needsNewAccount === false?"block":"none",
-                            },
-                        }}
-                        transition={{duration: 0.5}}
-                    >
+                    <div className="field-group">
                         <label htmlFor="claim-account-id" className="sr-only">Enter account name</label>
                         <input type="text" id="claim-account-id" name="claim-account-id"
                                placeholder="Enter account name"/>
-                    </motion.div>
+                    </div>
 
 
                     <button type="submit" id="claim-button" onClick={claimPrize}>Submit</button>
