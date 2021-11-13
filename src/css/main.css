@@ -333,3 +333,7 @@ button[type=submit]:hover,
 .main-area .grid [text-anchor="start"] {
   font-size: 41% !important;
 }
+
+.main-area .styles_WrapperUi__2TxXl {
+  position: fixed;
+}
