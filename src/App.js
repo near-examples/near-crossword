@@ -214,6 +214,7 @@ const App = ({nearConfig, data, creatorAccount}) => {
                     </a>
                 </div>
             </header>
+            <a onClick={()=>setShowLoader(true)}>show loader</a>
             <main className="main-area">
                 {showLoader && ( <SimpleDark/> )}
                 {data && solvedPuzzle === null && (
