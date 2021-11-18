@@ -23,7 +23,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 8,
-     "clue": "clue for sharding"
+     "clue": "NEAR recently enabled this. We now have 4 of something on mainnet."
    },
    {
      "num": 1,
@@ -33,7 +33,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Down",
      "length": 10,
-     "clue": "clue for subaccount"
+     "clue": "aloha.mike.near is called a ___ of mike.near"
    },
    {
      "num": 2,
@@ -43,7 +43,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 9,
-     "clue": "clue for accesskey"
+     "clue": "You NEAR account can have full and function-call versions of this."
    },
    {
      "num": 3,
@@ -53,7 +53,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Down",
      "length": 7,
-     "clue": "clue for indexer"
+     "clue": "Since data on-chain is hard to read, some folks will set up this, which helps organize the info."
    },
    {
      "num": 4,
@@ -63,7 +63,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 11,
-     "clue": "clue for nonfungible"
+     "clue": "A special type of token used for DeFi, subscriptions, and art."
    },
    {
      "num": 5,
@@ -73,7 +73,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 3,
-     "clue": "clue for rpc"
+     "clue": "Remote Procedure Call"
    },
    {
      "num": 6,
@@ -83,7 +83,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Down",
      "length": 10,
-     "clue": "clue for simulation"
+     "clue": "One method of running smart contract tests capable of testing cross-contract calls."
    },
    {
      "num": 7,
@@ -93,7 +93,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 4,
-     "clue": "clue for init"
+     "clue": "Use this Rust macro over the initialization function."
    },
    {
      "num": 8,
@@ -103,7 +103,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Across",
      "length": 4,
-     "clue": "clue for defi"
+     "clue": "Decentralized finance is known as"
    },
    {
      "num": 8,
@@ -113,7 +113,7 @@ near call $NEAR_ACCT new_puzzle '{
      },
      "direction": "Down",
      "length": 3,
-     "clue": "clue for dao"
+     "clue": "A collective of people sharing activity, voting, spending, etc."
    }
   ]
 }' --accountId mike.testnet --deposit 10
