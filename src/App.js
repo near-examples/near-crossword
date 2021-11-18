@@ -23,7 +23,7 @@ const App = ({nearConfig, data }) => {
 
     async function claimPrize(e) {
         e.preventDefault();
-        const winner_account_id = document.getElementById('claim-account-id').value;
+        const winner_account_id = document.getElementById('claim-account-id').value.toLowerCase();
         const memo = document.getElementById('claim-memo').value;
         const keyStore = new nearAPI.keyStores.InMemoryKeyStore();
         const keyPair = nearAPI.utils.key_pair.KeyPair.fromString(playerKeyPair.secretKey);
@@ -75,7 +75,7 @@ const App = ({nearConfig, data }) => {
             }
         } catch (e) {
             console.error('Unexpected error when claiming', e);
-            if (e.message.contains('Can not sign transactions for account')) {
+            if (e.message.includes('Can not sign transactions for account')) {
                 // Someone has submitted the solution before the player!
                 console.log("Oof, that's rough, someone already solved this.")
             }
@@ -84,44 +84,48 @@ const App = ({nearConfig, data }) => {
             // See if the transaction succeeded during transfer
             // or succeeded when creating a new account.
             // If unsuccessful, let the user try again.
-            console.log('Transaction status:', transaction.status);
-            const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
-            if (tx_succeeded) {
-                let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
-                if (needsNewAccount) {
-                    // Look for base64-encoded "false"
-                    if (tx_success_value === 'true') {
-                        // This tells the React app that it's solved and claimed
-                        setSolvedPuzzle(false);
-                        setClaimError('');
+            if (!transaction) {
+                setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.");
+            } else {
+                console.log('Transaction status:', transaction.status);
+                const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
+                if (tx_succeeded) {
+                    let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
+                    if (needsNewAccount) {
+                        // Look for base64-encoded "false"
+                        if (tx_success_value === 'true') {
+                            // This tells the React app that it's solved and claimed
+                            setSolvedPuzzle(false);
+                            setClaimError('');
 
-                        // Clean up and get ready for next puzzle
-                        localStorage.removeItem('playerSolvedPuzzle');
-                        localStorage.removeItem('guesses');
+                            // Clean up and get ready for next puzzle
+                            localStorage.removeItem('playerSolvedPuzzle');
+                            localStorage.removeItem('guesses');
+                        } else {
+                            setClaimError('Could not create that account, please try another account name.');
+                        }
                     } else {
-                        setClaimError('Could not create that account, please try another account name.');
+                        if (tx_success_value === 'true') {
+                            // This tells the React app that it's solved and claimed
+                            setSolvedPuzzle(false);
+                            setClaimError('');
+                            // Clean up and get ready for next puzzle
+                            localStorage.removeItem('playerSolvedPuzzle');
+                            localStorage.removeItem('guesses');
+                        } else {
+                            setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.");
+                        }
                     }
                 } else {
-                    if (tx_success_value === 'true') {
-                        // This tells the React app that it's solved and claimed
-                        setSolvedPuzzle(false);
-                        setClaimError('');
-                        // Clean up and get ready for next puzzle
-                        localStorage.removeItem('playerSolvedPuzzle');
-                        localStorage.removeItem('guesses');
-                    } else {
-                        setClaimError("Couldn't transfer reward to that account, please try another account name or create a new one.")
-                    }
+                    // Transaction failed
+                    setClaimError(`Error with transaction: ${transaction.status.Failure}`);
+                    console.log('Error with transaction', transaction.status.Failure);
                 }
-            } else {
-                // Transaction failed
-                setClaimError(`Error with transaction: ${transaction.status.Failure}`);
-                console.log('Error with transaction', transaction.status.Failure);
-            }
 
-            if (transaction.hasOwnProperty('transaction') &&
-                transaction.transaction.hasOwnProperty('hash')) {
-                console.log('Transaction hash:', transaction.transaction.hash);
+                if (transaction.hasOwnProperty('transaction') &&
+                    transaction.transaction.hasOwnProperty('hash')) {
+                    console.log('Transaction hash:', transaction.transaction.hash);
+                }
             }
         }
     }
@@ -198,42 +202,79 @@ const App = ({nearConfig, data }) => {
     // 2. The crossword puzzle interface, shown when there's a crossword puzzle to solve
     // 3. The crossword puzzle has been solved, and the reward needs to be claimed
     // 4. There are no crossword puzzles to solve and this user has claimed any they won
-    return (
-        <div className="wrapper">
-            <header className="site-header">
-                <div className="site-logo">
-                    <a href="#">
-                        <img src={logo} width="271" alt="Near Crossword Puzzle"/>
-                    </a>
-                </div>
-            </header>
-            <main className="main-area">
-                {showLoader && ( <SimpleDark/> )}
-                {data && solvedPuzzle === null && (
-                    <CrosswordPage
-                        data={data}
-                        setSolvedPuzzle={setSolvedPuzzle}
-                        onCrosswordComplete={onCrosswordComplete}
-                    /> )}
-                {solvedPuzzle && (
-                    <WonPage
-                        claimStatusClasses={claimStatusClasses}
-                        claimError={claimError}
-                        needsNewAccount={needsNewAccount}
-                        setNeedsNewAccount={setNeedsNewAccount}
-                        claimPrize={claimPrize}
-                        playerKeyPair={playerKeyPair}
-                        nearConfig={nearConfig}
-                    />
-                )}
-                {solvedPuzzle === false && claimError === '' && (
-                    <SuccessPage/>
-                )}
-                {!data && !solvedPuzzle && ( <NoCrosswordsPage/> )}
-            </main>
-        </div>
-    );
-
+    if (showLoader) {
+        return (
+          <div className="wrapper">
+              <header className="site-header">
+                  <div className="site-logo">
+                      <a href="#">
+                          <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                      </a>
+                  </div>
+              </header>
+              <main className="main-area">
+                  <SimpleDark />
+              </main>
+          </div>
+        )
+    } else if (data && solvedPuzzle === null) {
+        return (
+          <div className="wrapper">
+              <header className="site-header">
+                  <div className="site-logo">
+                      <a href="#">
+                          <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                      </a>
+                  </div>
+              </header>
+              <main className="main-area">
+                  <CrosswordPage
+                    data={data}
+                    setSolvedPuzzle={setSolvedPuzzle}
+                    onCrosswordComplete={onCrosswordComplete}
+                  />
+              </main>
+          </div>
+        )
+    } else if (solvedPuzzle) {
+        return (
+          <div className="wrapper">
+              <header className="site-header">
+                  <div className="site-logo">
+                      <a href="#">
+                          <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                      </a>
+                  </div>
+              </header>
+              <main className="main-area">
+                  <WonPage
+                    claimStatusClasses={claimStatusClasses}
+                    claimError={claimError}
+                    needsNewAccount={needsNewAccount}
+                    setNeedsNewAccount={setNeedsNewAccount}
+                    claimPrize={claimPrize}
+                    playerKeyPair={playerKeyPair}
+                    nearConfig={nearConfig}
+                  />
+              </main>
+          </div>
+        )
+    } else if (!data && !solvedPuzzle) {
+        return (
+            <div className="wrapper">
+                <header className="site-header">
+                    <div className="site-logo">
+                        <a href="#">
+                            <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                        </a>
+                    </div>
+                </header>
+                <main className="main-area">
+                    <NoCrosswordsPage/>
+                </main>
+            </div>
+        )
+    }
 }
 
 export default App;
