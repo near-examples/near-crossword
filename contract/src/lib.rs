@@ -1,12 +1,12 @@
 mod debugging;
 
 use near_sdk::collections::{LookupMap, UnorderedSet};
-use near_sdk::serde_json::{self};
+use near_sdk::serde_json;
 use near_sdk::{
     borsh::{self, BorshDeserialize, BorshSerialize},
     ext_contract, log,
     serde::{Deserialize, Serialize},
-    Balance, Promise, PromiseResult,
+    Balance, Promise, PromiseResult, PanicOnDefault
 };
 use near_sdk::{env, near_bindgen, PublicKey};
 use near_sdk::{json_types::Base58PublicKey, AccountId};
@@ -129,8 +129,12 @@ pub struct Puzzle {
     answer: Vec<Answer>,
 }
 
+/// Regarding PanicOnDefault:
+/// When you want to have a "new" function initialize a smart contract,
+/// you'll likely want to follow this pattern of having a default implementation that panics,
+/// directing the user to call the initialization method. (The one with the #[init] macro)
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Crossword {
     puzzles: LookupMap<PublicKey, Puzzle>,
     unsolved_puzzles: UnorderedSet<PublicKey>,
@@ -138,14 +142,6 @@ pub struct Crossword {
     creator_account: AccountId,
 }
 
-/// When you want to have a "new" function initialize a smart contract,
-/// you'll likely want to follow this pattern of having a default implementation that panics,
-/// directing the user to call the initialization method. (The one with the #[init] macro)
-impl Default for Crossword {
-    fn default() -> Self {
-        env::panic(b"The contract is not initialized. Please call the 'new' function. It's a good idea to call this as a batch Action when deploying.");
-    }
-}
 
 #[near_bindgen]
 impl Crossword {

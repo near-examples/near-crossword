@@ -98,5 +98,5 @@ module.exports = {
   mungeBlockchainCrossword,
   viewMethodOnContract,
   parseSolutionSeedPhrase,
-  b64ToUtf8: b64toUtf8
+  b64toUtf8
 };
