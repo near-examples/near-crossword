@@ -6,6 +6,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "env-cmd": "^10.1.0",
+    "framer-motion": "^5.2.1",
     "near-api-js": "^0.42.0",
     "near-cli": "^2.1.1",
     "near-seed-phrase": "github:near/near-seed-phrase",
@@ -14,7 +15,7 @@
     "react-dom": "^16.13.1",
     "react-fullpage-custom-loader": "^0.1.6",
     "react-scripts": "4.0.3",
-    "styled-components": "^5.2.0",
+    "styled-components": "^5.3.3",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
