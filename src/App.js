@@ -259,6 +259,21 @@ const App = ({nearConfig, data }) => {
               </main>
           </div>
         )
+    } else if (solvedPuzzle === false && claimError === '') {
+        return (
+            <div className="wrapper">
+                <header className="site-header">
+                    <div className="site-logo">
+                        <a href="#">
+                            <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                        </a>
+                    </div>
+                </header>
+                <main className="main-area">
+                    <SuccessPage/>
+                </main>
+            </div>
+        )
     } else if (!data && !solvedPuzzle) {
         return (
             <div className="wrapper">
@@ -274,6 +289,8 @@ const App = ({nearConfig, data }) => {
                 </main>
             </div>
         )
+    } else {
+        return (<div>email me, something weird happened. mike@near.org</div>)
     }
 }
 
