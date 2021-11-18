@@ -233,7 +233,7 @@ const App = ({nearConfig, data, creatorAccount}) => {
                         nearConfig={nearConfig}
                     />
                 )}
-                {solvedPuzzle === false  && claimError === '' && (
+                {solvedPuzzle === false && claimError === '' && (
                     <SuccessPage/>
                 )}
                 {!data && !solvedPuzzle && ( <NoCrosswordsPage/> )}
