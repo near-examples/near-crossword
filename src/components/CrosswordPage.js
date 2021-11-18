@@ -2,7 +2,7 @@ import {ThemeProvider} from "styled-components";
 import Crossword from "react-crossword";
 import React from 'react';
 
-const CrosswordPage = ({data,setSolvedPuzzle, onCrosswordComplete}) => {
+const CrosswordPage = ({data, onCrosswordComplete}) => {
     return (
 
         <div className="content">

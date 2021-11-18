@@ -1,7 +1,6 @@
 import React from "react";
 import {motion} from 'framer-motion/dist/framer-motion';
 
-
 const WonPage = ({
                      claimStatusClasses,
                      claimError,

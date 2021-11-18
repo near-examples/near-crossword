@@ -1,6 +1,6 @@
 import './App.css';
-import React, {useCallback, useRef, useState} from 'react';
-import {parseSolutionSeedPhrase, b64ToUtf8} from './utils';
+import React, {useCallback, useState} from 'react';
+import {parseSolutionSeedPhrase, b64toUtf8} from './utils';
 import {parseSeedPhrase} from 'near-seed-phrase';
 import * as nearAPI from "near-api-js";
 import {createGridData, loadGuesses} from "react-crossword/dist/es/util";
@@ -10,12 +10,9 @@ import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
 import SuccessPage from "./components/SuccessPage";
 
-const logo = require('./img/logo_v2.png')
+const logo = require('./img/logo_v2.png');
 
-
-const App = ({nearConfig, data, creatorAccount}) => {
-    console.log('data: ', data)
-    const crossword = useRef();
+const App = ({nearConfig, data }) => {
     const [solvedPuzzle, setSolvedPuzzle] = useState(localStorage.getItem('playerSolvedPuzzle') || null);
     const playerKeyPair = JSON.parse(localStorage.getItem('playerKeyPair'));
     const crosswordSolutionPublicKey = localStorage.getItem('crosswordSolutionPublicKey');
@@ -90,7 +87,7 @@ const App = ({nearConfig, data, creatorAccount}) => {
             console.log('Transaction status:', transaction.status);
             const tx_succeeded = transaction.status.hasOwnProperty('SuccessValue');
             if (tx_succeeded) {
-                let tx_success_value = b64ToUtf8(transaction.status.SuccessValue);
+                let tx_success_value = b64toUtf8(transaction.status.SuccessValue);
                 if (needsNewAccount) {
                     // Look for base64-encoded "false"
                     if (tx_success_value === 'true') {
@@ -194,10 +191,6 @@ const App = ({nearConfig, data, creatorAccount}) => {
     let claimStatusClasses = 'hide';
     if (claimError !== '') {
         claimStatusClasses = 'show';
-    }
-    let seedPhraseClasses = 'hide';
-    if (needsNewAccount) {
-        seedPhraseClasses = 'show';
     }
 
     // There are four different "pages"
