@@ -93,12 +93,13 @@ span.important {
 
 #claim-status p {
     padding: 1.5em;
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: bold;
     color: #ffffff;
 }
 
 #seed-phrase-wrapper {
+    display: none;
     background-color: #FAF8D1;
     border-radius: 6px;
 }
@@ -123,4 +124,43 @@ span.important {
 #seed-phrase-wrapper #seed-phrase {
     font-size: 1.7em;
     color: #ff585d;
+}
+
+.grid-flow-row {
+    grid-auto-flow: row;
+}
+
+.grid-flow-col {
+    grid-auto-flow: column;
+}
+
+.grid-flow-row-dense {
+    grid-auto-flow: row dense;
+}
+
+.grid-flow-col-dense {
+    grid-auto-flow: column dense;
+}
+
+.main-area .grid.success-links {
+    display: grid;
+    max-width: 100%;
+    margin-top: 50px;
+}
+
+.success-links > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.success-links .success-links-center {
+    margin: 0 auto;
+}
+
+.success-links .success-link-border-right {
+    border-right: 1px solid #ccc;
+}
+
+.no-puzzles .btn {
+    height: 75px;
 }

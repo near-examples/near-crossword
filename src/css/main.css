@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.43;
   font-family: Manrope, sans-serif !important;
   color: #000;
@@ -177,7 +177,7 @@ img {
 .container {
   padding: 0 15px;
   width: 100vw;
-  max-width: calc(545px + 30px);
+  /*max-width: calc(545px + 30px);*/
   margin: 0 auto;
   text-align: center;
 }
