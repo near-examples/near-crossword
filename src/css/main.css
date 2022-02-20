@@ -1,4 +1,6 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
@@ -13,8 +15,9 @@ body {
   line-height: 1.43;
   font-family: Manrope, sans-serif !important;
   color: #000;
-  background: url('../img/bg.png') repeat-x top center;
-  background-size: auto 236px;
+  background-image: url("../assets/background.svg");
+  background-size: cover;
+  min-height: 100vh;
 }
 
 ::-moz-selection {
@@ -62,8 +65,13 @@ textarea {
 
 img {
   display: flex;
-  max-width: 100%;
+  max-width: 150px;
   height: auto;
+  margin: 0 auto;
+}
+img.logo {
+  max-width: 221px;
+  height: 70px;
 }
 
 .sr-only {
@@ -187,8 +195,8 @@ img {
   display: grid;
   grid-gap: 0;
   grid-template-areas:
-          "header"
-          "content";
+    "header"
+    "content";
   grid-template-rows: auto 1fr;
   grid-template-columns: 1fr;
   min-height: 100vh;
@@ -210,7 +218,7 @@ img {
   justify-content: center;
   align-items: center;
   /*padding-top: 24px;*/
-  padding-top: 48px;
+  padding-top: 85px;
   /*padding-bottom: 24px;*/
 }
 
@@ -221,27 +229,32 @@ img {
 .content {
   margin-top: 25px;
 }
-.field-group input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=reset]) {
-  background: rgba(213, 213, 213, 0.1);
-  border: 1px solid #D4D4D4;
+.field-group
+  input:not([type="radio"]):not([type="checkbox"]):not([type="submit"]):not([type="reset"]) {
+  background: #f9fafa;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 19px;
+  color: #5f8afa;
+  border: 0;
   border-radius: 3px;
   display: block;
   width: 100%;
-  color: #000;
   padding: 12px 8px;
-  font-weight: 500;
   text-align: left;
 }
 
-.field-group input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=reset]):focus {
-  outline-color: #AAD055;
+.field-group
+  input:not([type="radio"]):not([type="checkbox"]):not([type="submit"]):not([type="reset"]):focus {
+  outline-color: #a1bcff;
 }
-.field-group input:not([type=radio]):not([type=checkbox])::placeholder {
-  color: rgba(0,0,0,.4);
+.field-group input:not([type="radio"]):not([type="checkbox"])::placeholder {
+  color: #a7a7a7;
 }
 
-input[type=submit],
-button[type=submit],
+input[type="submit"],
 .btn {
   font-weight: 500;
   color: #000;
@@ -257,8 +270,7 @@ button[type=submit],
   justify-content: center;
   text-decoration: none;
 }
-input[type=submit]:hover,
-button[type=submit]:hover,
+input[type="submit"]:hover,
 .btn:hover {
   background: #000;
   color: #fff;
@@ -268,17 +280,17 @@ button[type=submit]:hover,
   text-align: left;
   line-height: 2;
 }
-.radio-field label{
+.radio-field label {
   position: relative;
   padding-left: 23px;
 }
-.radio-field label:before{
-  content: '';
+.radio-field label:before {
+  content: "";
   position: absolute;
   left: 0;
   top: 1px;
   background: rgba(196, 196, 196, 0.1);
-  border: 1.5px solid #D4D4D4;
+  border: 1.5px solid #d4d4d4;
   width: 17px;
   height: 17px;
   border-radius: 50%;
@@ -287,22 +299,114 @@ button[type=submit]:hover,
   position: absolute;
   opacity: 0;
 }
-.radio-field input:checked + label:before{
-  background: #AAD055;
-  border-color: #AAD055;
+.radio-field input:checked + label:before {
+  background: #aad055;
+  border-color: #aad055;
 }
 
 .title {
+  font-family: Manrope;
+  font-style: normal;
   font-weight: 600;
-  font-size: 37px;
-  line-height: 1;
-  color: #6B6EF9;
-  margin: 0 0 5px;
+  font-size: 30px;
+  line-height: 42px;
+  text-align: center;
+  color: #262626;
 }
+
 .error-msg {
   font-weight: 600;
   line-height: 2.5;
-  color: #DB5555;
+  color: #db5555;
+}
+
+.error-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  background-image: url("../assets/error-icon.svg");
+  background-size: contain;
+}
+
+.win-page {
+  margin-top: 160px;
+  padding: 0 20px;
+}
+
+.error-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.win-page-error {
+  text-align: center;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #db5555;
+}
+
+.radio-field {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 16px;
+  border: 1px solid #a7a7a7;
+  border-radius: 50%;
+}
+
+.radio-button.active {
+  border: 1px solid #5f8afa;
+}
+
+.radio-button-content {
+  width: 10px;
+  height: 10px;
+  background: #5f8afa;
+  border-radius: 50%;
+}
+
+.win-button {
+  display: block;
+  height: 56px;
+  width: 100%;
+  max-width: 423px;
+  margin: 0 auto 40px;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #ffffff;
+  background: #5f8afa;
+  border: 0;
+  border-radius: 80px;
+  cursor: pointer;
+}
+
+/*
+.win-button.disabled {
+  background: #f9fafa;
+  color: #a7a7a7;
+}
+*/
+
+.button-wrap {
+  display: flex;
+  justify-content: center;
 }
 
 /*.site-logo { padding-top: 100px; }*/
@@ -316,7 +420,7 @@ button[type=submit]:hover,
   max-width: 70vh;
 }
 .main-area .clues {
-  background: #F5F5F5;
+  background: #f5f5f5;
   display: flex;
   justify-content: center;
   padding: 60px 0;
@@ -336,4 +440,86 @@ button[type=submit]:hover,
 
 .main-area .styles_WrapperUi__2TxXl {
   position: fixed;
+}
+
+.successful-page {
+  height: 100%;
+}
+
+.successful-page-title {
+  margin: 160px 0 20px;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 42px;
+  text-align: center;
+  color: #262626;
+}
+
+.successful-text {
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+
+  color: #262626;
+}
+
+.success-links {
+  display: flex;
+}
+
+.second-text {
+  margin: 15px 0 20px;
+  width: 200px;
+}
+
+.near-link {
+  display: block;
+  border: 0.5px solid #262626;
+  padding: 15px 38px;
+  border-radius: 80px;
+  text-decoration: none;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #262626;
+}
+
+.near-link:hover {
+  opacity: 0.7;
+}
+.bridge-text {
+  margin: 0 auto 10px;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: #262626;
+  width: 160px;
+}
+
+.defi-text {
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: #262626;
+}
+
+.arrows {
+  width: 15px;
+  height: 19px;
+  margin: 32px auto 40px;
+  background: url("../assets/arrows.svg") center;
 }

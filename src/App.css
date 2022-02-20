@@ -1,60 +1,60 @@
 #page {
-    padding: 2em;
+  padding: 2em;
 }
 
 h1 {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 #crossword-wrapper .clue.correct::before {
-    content: "✓";
-    display: inline-block;
-    text-decoration: none;
-    color: rgb(100, 200, 100);
-    margin-right: 0.25em;
+  content: "✓";
+  display: inline-block;
+  text-decoration: none;
+  color: rgb(100, 200, 100);
+  margin-right: 0.25em;
 }
 
 #crossword-wrapper {
-    margin-top: 2em;
+  margin-top: 2em;
 }
 
 #messages {
-    background-color: rgb(230, 230, 230);
-    margin: 1em 0;
-    padding: 1em;
+  background-color: rgb(230, 230, 230);
+  margin: 1em 0;
+  padding: 1em;
 }
 
 @font-face {
-    font-family: 'Inter';
-    src:  url('./fonts/static/Inter-Regular.ttf') format('ttf'),
-    url('./fonts/static/Inter-Medium.ttf') format('ttf');
+  font-family: "Inter";
+  src: url("./fonts/static/Inter-Regular.ttf") format("ttf"),
+    url("./fonts/static/Inter-Medium.ttf") format("ttf");
 }
 
 body {
-    margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 span.important {
-    font-size: 1.9rem;
-    color: #FF585D;
+  font-size: 1.9rem;
+  color: #ff585d;
 }
 
 .claim-inputs {
-    margin-top: 30px
+  margin-top: 30px;
 }
 
 .claim-inputs label {
-    font-size: 1.3em;
+  font-size: 1.3em;
 }
 
 /*#claim-memo, #claim-account-id, .btn {*/
@@ -69,98 +69,141 @@ span.important {
 /*    margin: .5em;*/
 /*}*/
 
-#page h1, #page.no-puzzles {
-    text-align: center;
+#page h1,
+#page.no-puzzles {
+  text-align: center;
 }
 
 #page.claim {
-    margin: 0 auto;
-    width: 576px;
+  margin: 0 auto;
+  width: 576px;
 }
 
 #claim-status {
-    background-color: #ff585d;
-    border-radius: 6px;
+  background-color: #ff585d;
+  border-radius: 6px;
 }
 
 #claim-status.hide {
-    display: none;
+  display: none;
 }
 
 #claim-status.show {
-    display: block;
+  display: block;
 }
 
 #claim-status p {
-    padding: 1.5em;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #ffffff;
+  padding: 1.5em;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #ffffff;
 }
 
 #seed-phrase-wrapper {
-    display: none;
-    background-color: #FAF8D1;
-    border-radius: 6px;
+  display: none;
+  background-color: #faf8d1;
+  border-radius: 6px;
 }
 
 #seed-phrase-wrapper.hide {
-    display: none;
+  display: none;
 }
 
 #seed-phrase-wrapper.show {
-    display: block;
+  display: block;
 }
 
 #seed-phrase-wrapper h3 {
-    padding: .5em .5em 0;
+  padding: 0.5em 0.5em 0;
 }
 
 #seed-phrase-wrapper p {
-    padding: .5em;
-    font-size: 1.3em;
+  padding: 0.5em;
+  font-size: 1.3em;
 }
 
 #seed-phrase-wrapper #seed-phrase {
-    font-size: 1.7em;
-    color: #ff585d;
+  font-size: 1.7em;
+  color: #ff585d;
 }
 
 .grid-flow-row {
-    grid-auto-flow: row;
+  grid-auto-flow: row;
 }
 
 .grid-flow-col {
-    grid-auto-flow: column;
+  grid-auto-flow: column;
 }
 
 .grid-flow-row-dense {
-    grid-auto-flow: row dense;
+  grid-auto-flow: row dense;
 }
 
 .grid-flow-col-dense {
-    grid-auto-flow: column dense;
+  grid-auto-flow: column dense;
 }
 
 .main-area .grid.success-links {
-    display: grid;
-    max-width: 100%;
-    margin-top: 50px;
-}
-
-.success-links > div {
-    display: flex;
-    flex-direction: column;
+  display: grid;
+  max-width: 100%;
+  margin-top: 50px;
 }
 
 .success-links .success-links-center {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
-.success-links .success-link-border-right {
-    border-right: 1px solid #ccc;
+.success-link {
+  width: 260px;
+  height: 200px;
+  background: #ffffff;
+  box-shadow: 0px 6px 32px rgba(167, 167, 167, 0.1);
+  border-radius: 12px;
+  margin: 24px;
+  padding: 27px;
 }
 
 .no-puzzles .btn {
-    height: 75px;
+  height: 75px;
+}
+
+.no-puzzles .success-link {
+  padding: 32px 25px 32px;
+  height: 170px;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #262626;
+}
+
+.no-puzzles .near-link {
+  margin-top: 28px;
+  padding: 15px 0;
+  height: 50px;
+}
+.no-puzzles .bridge-text {
+  width: 100%;
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  margin: 0 0 10px;
+  color: #262626;
+}
+
+.success-links {
+  text-align: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1080px) {
+  .success-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
