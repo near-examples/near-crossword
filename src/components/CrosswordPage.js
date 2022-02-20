@@ -10,12 +10,12 @@ const CrosswordPage = ({ data, onCrosswordComplete }) => {
           theme={{
             columnBreakpoint: "9999px",
             gridBackground: "#fff",
-            cellBackground: "#9FB9FC",
+            cellBackground: "#8ba9f9",
             cellBorder: "#dfe8fe",
             textColor: "#dae3ff",
             numberColor: "#000000",
-            focusBackground: "#5F8AFA",
-            highlightBackground: "#EFF4FF",
+            focusBackground: "#346af7",
+            highlightBackground: "#779bfc",
           }}
         >
           <Crossword data={data} onCrosswordComplete={onCrosswordComplete} />

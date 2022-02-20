@@ -397,11 +397,12 @@ input[type="submit"]:hover,
   cursor: pointer;
 }
 
+/*
 .win-button.disabled {
   background: #f9fafa;
   color: #a7a7a7;
-  cursor: not-allowed;
 }
+*/
 
 .button-wrap {
   display: flex;
