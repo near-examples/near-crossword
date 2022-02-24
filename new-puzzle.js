@@ -11,6 +11,7 @@ const homedir = require("os").homedir();
 
 const CREDENTIALS_DIR = ".near-credentials";
 const CONTRACT_NAME = process.env.CONTRACT_NAME || "example.testnet";
+const CREATOR_ACCOUNT_NAME = process.env.MASTER_ACCOUNT || process.env.CONTRACT_NAME || "example.testnet";
 
 const credentialsPath = path.join(homedir, CREDENTIALS_DIR);
 const keyStore = new keyStores.UnencryptedFileSystemKeyStore(credentialsPath);
@@ -26,6 +27,15 @@ sendTransactions();
 async function sendTransactions() {
     const near = await connect({ ...config, keyStore });
     const account = await near.account(CONTRACT_NAME);
+    const newArgs = {
+        creator_account: CREATOR_ACCOUNT_NAME
+    };
+    const initResult = await account.functionCall({
+        contractId: CONTRACT_NAME,
+        methodName: "new",
+        args: Buffer.from(JSON.stringify(newArgs)),
+        gas: 300000000000000, // Optional, this is the maximum allowed case
+    });
     const methodArgs = {
         answer_pk: "ed25519:CpqWpFLps6zNNXSwn9ZYgvTgSVQ598fn1kWXgjcA2uLp",
         dimensions: {
@@ -42,7 +52,8 @@ async function sendTransactions() {
         attachedDeposit: '10000000000000000000000000', // Optional, 10 NEAR
     });
 
-    console.log(`https://explorer.testnet.near.org/transactions/${result.transaction.hash}`);
+    console.log(`https://explorer.testnet.near.org/transactions/${initResult.transaction.hash}`, 'Init');
+    console.log(`https://explorer.testnet.near.org/transactions/${result.transaction.hash}`, 'Add Puzzle');
 }
 
 function getPuzzleData() {
