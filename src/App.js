@@ -9,6 +9,9 @@ import CrosswordPage from "./components/CrosswordPage";
 import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
 import SuccessPage from "./components/SuccessPage";
+// import CrosswordInput from './components/CrosswordInput';
+// import NavBar from './components/NavBar';
+import CrosswordForm from './components/CrosswordForm'
 
 const logo = require("./img/logo_v2.png");
 
@@ -213,126 +216,25 @@ const App = ({ nearConfig, data }) => {
     claimStatusClasses = "show";
   }
 
-  // There are four different "pages"
-  // 1. The "loading screen" when transactions are hitting the blockchain
-  // 2. The crossword puzzle interface, shown when there's a crossword puzzle to solve
-  // 3. The crossword puzzle has been solved, and the reward needs to be claimed
-  // 4. There are no crossword puzzles to solve and this user has claimed any they won
-  if (showLoader) {
     return (
-      <div className="wrapper">
-        <header className="site-header">
-          <div className="site-logo">
-            <a href="#">
-              <img
-                src={logo}
-                className="logo"
-                width="271"
-                alt="Near Crossword Puzzle"
-              />
-            </a>
-          </div>
-        </header>
-        <main className="main-area">
-          <SimpleDark />
-        </main>
-      </div>
-    );
-  } else if (data && solvedPuzzle === null) {
-    return (
-      <div className="wrapper">
-        <header className="site-header">
-          <div className="site-logo">
-            <a href="#">
-              <img
-                src={logo}
-                className="logo"
-                width="271"
-                alt="Near Crossword Puzzle"
-              />
-            </a>
-          </div>
-        </header>
-        <main className="main-area">
-          <CrosswordPage
-            data={data}
-            setSolvedPuzzle={setSolvedPuzzle}
-            onCrosswordComplete={onCrosswordComplete}
-          />
-        </main>
-      </div>
-    );
-  } else if (solvedPuzzle) {
-    return (
-      <div className="wrapper">
-        <header className="site-header">
-          <div className="site-logo">
-            <a href="#">
-              <img
-                src={logo}
-                className="logo"
-                width="271"
-                alt="Near Crossword Puzzle"
-              />
-            </a>
-          </div>
-        </header>
-        <main>
-          <WonPage
-            claimStatusClasses={claimStatusClasses}
-            claimError={claimError}
-            needsNewAccount={needsNewAccount}
-            setNeedsNewAccount={setNeedsNewAccount}
-            claimPrize={claimPrize}
-            playerKeyPair={playerKeyPair}
-            nearConfig={nearConfig}
-          />
-        </main>
-      </div>
-    );
-  } else if (solvedPuzzle === false && claimError === "") {
-    return (
-      <div className="wrapper">
-        <header className="site-header">
-          <div className="site-logo">
-            <a href="#">
-              <img
-                src={logo}
-                className="logo"
-                width="271"
-                alt="Near Crossword Puzzle"
-              />
-            </a>
-          </div>
-        </header>
-        <main className="main-area">
-          <SuccessPage />
-        </main>
-      </div>
-    );
-  } else if (!data && !solvedPuzzle) {
-    return (
-      <div className="wrapper">
-        <header className="site-header">
-          <div className="site-logo">
-            <a href="#">
-              <img
-                src={logo}
-                className="logo"
-                width="271"
-                alt="Near Crossword Puzzle"
-              />
-            </a>
-          </div>
-        </header>
-        <main>
-          <NoCrosswordsPage />
-        </main>
-      </div>
-    );
-  } else {
-    return <div>email me, something weird happened. mike@near.org</div>;
-  }
-};
+        <div className="wrapper">
+            <header className="site-header">
+                <div className="nav">
+                    <button className="btn" onClick={() => setShowForm(!showForm)}>
+                        { showForm ? 'Return to Crossword' : 'Make a Crossword Puzzle!' }
+                    </button>
+                </div>
+                <div className="site-logo">
+                    <a href="#">
+                        <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+                    </a>
+                </div>
+            </header>
+            <main className="main-area">
+                { renderPage() }
+            </main>
+        </div>
+    )
+}
 
 export default App;

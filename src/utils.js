@@ -7,8 +7,10 @@ import * as nearAPI from 'near-api-js';
 function mungeBlockchainCrossword(chainData) {
   const data = {
     across: {},
-    down: {}
+    down: {},
+    reward: nearAPI.utils.format.formatNearAmount(chainData[0].reward.toLocaleString('fullwide', {useGrouping:false}))
   };
+  console.log(data.reward)
   // Assume there is only one crossword puzzle, get the first
   const crosswordClues = chainData[0].answer;
 
@@ -19,6 +21,26 @@ function mungeBlockchainCrossword(chainData) {
     data[direction][clue.num] = {};
     data[direction][clue.num]['clue'] = clue.clue;
     data[direction][clue.num]['answer'] = '?'.repeat(clue.length);
+    data[direction][clue.num]['row'] = clue.start.y;
+    data[direction][clue.num]['col'] = clue.start.x;
+  });
+  return data;
+}
+
+function mungeLocalCrossword(answers) {
+  const data = {
+    across: {},
+    down: {}
+  };
+  const crosswordClues = answers;
+
+  crosswordClues.forEach((clue) => {
+    // In the smart contract it's stored as "Across" but the
+    // React library uses "across"
+    const direction = clue.direction.toLowerCase();
+    data[direction][clue.num] = {};
+    data[direction][clue.num]['clue'] = clue.clue;
+    data[direction][clue.num]['answer'] = clue.answer;
     data[direction][clue.num]['row'] = clue.start.y;
     data[direction][clue.num]['col'] = clue.start.x;
   });
@@ -67,6 +89,32 @@ function parseSolutionSeedPhrase(data, gridData) {
   return finalSeedPhrase;
 }
 
+function generateNewPuzzleSeedPhrase(data) {
+  // JavaScript determining what the highest clue number is
+  // Example: 10 if there are ten clues, some which have both across and down clues
+  let totalClues = Object.keys(data.across).concat(Object.keys(data.down))
+    .map(n => parseInt(n))
+    .reduce((n, m) => Math.max(n, m));
+
+  let seedPhrase = [];
+  // Assume that crossword starts at 1 and goes to totalClues
+  for (let i = 1; i <= totalClues; i++) {
+    let word = '';
+    // If a number has both across and down clues, do across first.
+    let iString = i.toString(); // not strictly necessary
+    if (data.across.hasOwnProperty(iString)) {
+      seedPhrase.push(data['across'][i].answer);
+    }
+    word = ''; // Clear for items where there's both across and down
+    if (data.down.hasOwnProperty(iString)) {
+      seedPhrase.push(data['down'][i].answer);
+    }
+  }
+  const finalSeedPhrase = seedPhrase.map(w => w.toLowerCase()).join(' ');
+  console.log(`Crossword solution as seed phrase: %c${finalSeedPhrase}`, "color: #00C1DE;");
+  return finalSeedPhrase;
+}
+
 // Taken from Mozilla docs here:
 // https://developer.mozilla.org/en-US/docs/Glossary/Base64#solution_1_%E2%80%93_escaping_the_string_before_encoding_it
 function b64toUtf8(str) {
@@ -96,7 +144,9 @@ function b64toUtf8(str) {
 
 module.exports = {
   mungeBlockchainCrossword,
+  mungeLocalCrossword,
   viewMethodOnContract,
   parseSolutionSeedPhrase,
+  generateNewPuzzleSeedPhrase,
   b64toUtf8
 };
