@@ -523,3 +523,56 @@ input[type="submit"]:hover,
   margin: 32px auto 40px;
   background: url("../assets/arrows.svg") center;
 }
+
+.clue-answer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  column-gap: 16px;
+}
+
+.nav {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+}
+
+.add-word-container {
+  display: flex;
+  justify-content: center;
+}
+
+.field-group-border-top {
+  border-top: 1px solid #ccc;
+  margin-top: 25px;
+  padding-top: 25px;
+}
+
+.field-group.clue-answer-item {
+  margin-bottom: 8px;
+}
+
+.crossword-form{
+  padding-top: 25px;
+}
+
+.field-group
+  input:not([type="radio"]):not([type="checkbox"]):not([type="submit"]):not([type="reset"]).field-with-errors {
+  border: 1px solid #db5555;
+}
+
+.field-group
+  input:not([type="radio"]):not([type="checkbox"]):not([type="submit"]):not([type="reset"]).field-with-errors:focus {
+  border: 1px solid #db5555;
+  outline-color: #db5555;
+}
+
+.form-text {
+  font-family: Manrope;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: #262626;
+}

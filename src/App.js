@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { parseSolutionSeedPhrase, b64toUtf8 } from "./utils";
 import { parseSeedPhrase } from "near-seed-phrase";
 import * as nearAPI from "near-api-js";
@@ -9,9 +9,8 @@ import CrosswordPage from "./components/CrosswordPage";
 import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
 import SuccessPage from "./components/SuccessPage";
-// import CrosswordInput from './components/CrosswordInput';
-// import NavBar from './components/NavBar';
 import CrosswordForm from './components/CrosswordForm'
+import ApiManager from "./signin";
 
 const logo = require("./img/logo_v2.png");
 
@@ -26,6 +25,58 @@ const App = ({ nearConfig, data }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [needsNewAccount, setNeedsNewAccount] = useState(false);
   const [claimError, setClaimError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  
+  useEffect(() => {
+    ApiManager.instance().then((apiInstance) => {
+      if (apiInstance.isSignedIn() && window.location.pathname === "/success") {
+        setShowForm(true)
+        // nearAPI modifies history asynchronously as part of WalletConnection constructor
+        // https://github.com/near/near-api-js/issues/817
+        window.setTimeout(() => history.replaceState(null, '', '/'), 500)
+      }
+    })
+  }, [])
+
+  const renderPage = () => {
+    // There are four different "pages" for the crosswords themselves and one for input
+    // 1. The "loading screen" when transactions are hitting the blockchain
+    // 2. The crossword puzzle interface, shown when there's a crossword puzzle to solve
+    // 3. The crossword puzzle has been solved, and the reward needs to be claimed
+    // 4. There are no crossword puzzles to solve and this user has claimed any they won
+    // 5. CrosswordForm page is loaded when showForm is true (user has selected a nav button that sets showForm to true)
+    if (showLoader) {
+      return <SimpleDark />
+    } else if (showForm) {
+      return <CrosswordForm />
+    } else if (data && solvedPuzzle === null) {
+      return (
+        <CrosswordPage
+          data={data}
+          setSolvedPuzzle={setSolvedPuzzle}
+          onCrosswordComplete={onCrosswordComplete}
+        />
+      )
+    } else if (solvedPuzzle) {
+      return (
+        <WonPage
+          claimStatusClasses={claimStatusClasses}
+          claimError={claimError}
+          needsNewAccount={needsNewAccount}
+          setNeedsNewAccount={setNeedsNewAccount}
+          claimPrize={claimPrize}
+          playerKeyPair={playerKeyPair}
+          nearConfig={nearConfig}
+        />
+      )
+    } else if (solvedPuzzle === false && claimError === '') {
+      return <SuccessPage/>
+    } else if (!data && !solvedPuzzle) {
+      return <NoCrosswordsPage/>
+    } else {
+      return <div>email me, something weird happened. mike@near.org</div>
+    }
+  }
 
   async function claimPrize(e) {
     e.preventDefault();
@@ -216,25 +267,35 @@ const App = ({ nearConfig, data }) => {
     claimStatusClasses = "show";
   }
 
-    return (
-        <div className="wrapper">
-            <header className="site-header">
-                <div className="nav">
-                    <button className="btn" onClick={() => setShowForm(!showForm)}>
-                        { showForm ? 'Return to Crossword' : 'Make a Crossword Puzzle!' }
-                    </button>
-                </div>
-                <div className="site-logo">
-                    <a href="#">
-                        <img src={logo} width="271" alt="Near Crossword Puzzle"/>
-                    </a>
-                </div>
-            </header>
-            <main className="main-area">
-                { renderPage() }
-            </main>
+  const handleCrosswordFormButton = async () => {
+    const apiInstance = await ApiManager.instance()
+    if (apiInstance.isSignedIn()) {
+      setShowForm(!showForm)
+      return
+    }
+
+    apiInstance.signIn()
+  }
+
+  return (
+    <div className="wrapper">
+      <header className="site-header">
+        <div className="nav">
+          <button className="btn" onClick={handleCrosswordFormButton}>
+            { showForm ? 'Return to Crossword' : 'Make a Crossword Puzzle' }
+          </button>
         </div>
-    )
+        <div className="site-logo">
+          <a href="#">
+            <img src={logo} width="271" alt="Near Crossword Puzzle"/>
+          </a>
+        </div>
+      </header>
+      <main className="main-area">
+        { renderPage() }
+      </main>
+    </div>
+  )
 }
 
 export default App;

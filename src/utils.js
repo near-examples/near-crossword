@@ -10,7 +10,6 @@ function mungeBlockchainCrossword(chainData) {
     down: {},
     reward: nearAPI.utils.format.formatNearAmount(chainData[0].reward.toLocaleString('fullwide', {useGrouping:false}))
   };
-  console.log(data.reward)
   // Assume there is only one crossword puzzle, get the first
   const crosswordClues = chainData[0].answer;
 

@@ -5,6 +5,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "crossword-layout-generator": "^0.1.1",
     "env-cmd": "^10.1.0",
     "framer-motion": "^5.2.1",
     "near-api-js": "^0.42.0",
