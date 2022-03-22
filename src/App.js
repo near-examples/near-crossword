@@ -9,8 +9,8 @@ import CrosswordPage from "./components/CrosswordPage";
 import NoCrosswordsPage from "./components/NoCrosswordsPage";
 import WonPage from "./components/WonPage";
 import SuccessPage from "./components/SuccessPage";
-import CrosswordForm from './components/CrosswordForm'
-import ApiManager from "./signin";
+import CrosswordForm from './components/CrosswordForm';
+import ApiManager from "./ApiManager";
 
 const logo = require("./img/logo_v2.png");
 
