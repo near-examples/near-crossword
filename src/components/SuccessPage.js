@@ -12,6 +12,9 @@ const SuccessPage = () => {
       <div className="successful-text">
         Check out what you can do with your prize money below.
       </div>
+      <div className="successful-text">
+        Or, <a href="/">return to front page.</a>
+      </div>
       <div className="arrows" />
       <div className="success-links">
         <div className="success-link">
